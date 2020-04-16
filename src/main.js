@@ -8,6 +8,8 @@ import 'lib-flexible'//移动端自适应
 import MintUI from 'mint-ui'
 import 'mint-ui/lib/style.css'
 
+import '@/assets/css/reset.scss'//初始化
+
 Vue.use(MintUI)//全局组建使用
 
 Vue.config.productionTip = false
