@@ -1,7 +1,10 @@
 <template>
-  <div class='nav'>
+<div>
+  <div class="nav-placeholder"></div><!-- 做一个占位距离 -->
+  <div class='nav'><!-- 做一个固定定位 -->
     <router-link :class="{ active: activeIndex == index }" v-for="(item,index) in navData" :key="item.name" :to="item.to">{{ item.name }}</router-link>
   </div>
+</div>
 </template>
 
 <script>
@@ -19,7 +22,19 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.nav-placeholder{
+  height: 81px;//占位与导航高度一样
+}
 .nav{
+  //导航固定
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 99;//最高
+  width: 100%;
+  background: #fff;
+
+
   display: flex;
   justify-content: center; //水平居中
   border-top: 1px solid #d43c33;/*no*/

@@ -15,6 +15,19 @@
 	      </router-link>	
 	    </li> 
     </ul>
+
+    <app-title>最新音乐</app-title>
+    <ul class="newSong-list">
+    	<li v-for="item in newSongData" :key="item.id">
+    		<router-link :to="''+item.id">
+    			<div class="text"><!-- 包括歌名和歌手 专辑 -->
+    				<div class="name">{{item.name}}</div>
+    				<div class="singer">{{item.song.artists[0].name != null? item.song.artists[0].name : '未知歌手' }} - {{item.song.album.name}}</div>  
+    			</div>
+    			<i class="fa fa-play-circle-o"></i><!-- 按钮 -->
+    		</router-link>
+    	</li>
+    </ul>
   </div>
 </template>
 
@@ -22,6 +35,9 @@
 import appNav from '@/components/app-nav'
 import appTitle from '@/components/app-title'
 import {getPersonalized} from '@/api/recommendation'
+import {getPersonalizedNewsong} from '@/api/recommendation'
+
+
 export default {
   data(){
     return {
@@ -31,8 +47,10 @@ export default {
   },
   created(){
   	this.getPersonalized();//组建被创建的时候触发，已经得到数据层了，就可以在network看见此接口及其数据了
+  	this.getPersonalizedNewsong();
   },
   methods:{
+  	//推荐歌单
   	getPersonalized(){//定义一个和接口一样的方法名，只是定义要在created中触发
 	  getPersonalized({//使用接口
 		params:{//传参
@@ -44,7 +62,17 @@ export default {
           this.imgTextData = data.result;//得到数据
         }
 	  })
-  	}
+  	},
+  	//推荐新音乐
+  	getPersonalizedNewsong(){
+	  getPersonalizedNewsong({}).then(res =>{
+		var data = res.data;
+        if(data.code == 200){//biaoshi成功
+          this.newSongData = data.result;//得到数据
+          //console.log(data.result);
+    	}
+	  })
+  	},
   },
   components: {
     appNav,
@@ -54,6 +82,7 @@ export default {
 </script>
 
 <style lang="scss">
+//推荐音乐样式 图文
 .imgText-list{
 	display:flex;//默认所有元素横向排列，不可能换行
 	flex-flow: wrap;//flex布局换行
@@ -95,6 +124,37 @@ export default {
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 	}
+}
+
+//最新音乐样式
+.newSong-list{
+  li{
+    padding-left: 20px;
+    &>a{
+      display: flex;//行元素不能套div 设flex就变成它的项了
+      justify-content: space-between;//两端对齐
+      border-bottom: #e2e2e3 1px solid;/*no*/
+    }
+    .text{
+      padding: 13px 0;
+    }
+    .name{
+      font-size: 26px;/*px*/
+      line-height: 48px;/*px*/
+    }
+    .singer{
+      font-size: 24px;/*px*/
+      line-height: 36px;/*px*/
+      color:#888888;
+    }
+    .fa-play-circle-o{
+      display: flex;
+      align-items: center;//上下居中
+      font-size: 44px;/*px*///字体图标
+      color: #aaaaaa;
+      margin-right: 20px;
+    }
+  }
 }
 
 </style>
