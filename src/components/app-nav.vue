@@ -18,17 +18,10 @@ export default {
 	  },
 }
 </script>
-
 <style lang="scss" scoped>
 .nav{
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 99;
-  width: 100%;
-  background: #fff;
   display: flex;
-  justify-content: center;//水平居中
+  justify-content: center; //水平居中
   border-top: 1px solid #d43c33;/*no*/
   border-bottom: 1px solid #cccccc;/*no*/
   box-sizing: border-box;
@@ -36,9 +29,10 @@ export default {
   font-size: 28px;/*px*/
   a{
     display: flex;
-    align-items: center;//垂直居中
-    padding:0 10px;//左右都是10
-    border-bottom: 4px solid transparent;//选中有下划线，其他的 transparent透明
+    align-items: center; //垂直居中
+    padding:0 10px; //左右都是10
+    border-bottom: 4px solid transparent;
+    //选中有下划线，其他的 transparent透明
     transform: translate(0,1px);/*no*/ //整体的a进行一个偏移，使下划线重叠
     margin: 0 60px;//都有左右的60
     &.active{//选中显示红色
