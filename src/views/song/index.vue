@@ -8,7 +8,6 @@
     		<i class="status" v-show="!song.isPlay"></i>
     	</div> 	
     </div>
-    <audio ref="audioNode" :src="song.url" controls="controls" class="song-audio"></audio><!-- ref:vue得到节点的一个标记  --> 
   </div>
 </template>
 
@@ -16,30 +15,33 @@
 import { getSongUrl} from '@/api/song';
 
 export default {
-  name: '',
+
+  
   data () {
     return {
       song:{
-      	isPlay:false,//是否播放 
+      	isPlay:true,//是否播放 
+        name:'',//歌名
       	url:null,//歌的url
       }
     }
   },
 
   created(){
-	this.getSongUrl();//触发接口
+	 this.getSongUrl();//触发接口
   },
 
   methods:{
   	songFun(){
-  		this.song.isPlay = !this.song.isPlay;
-  		if(this.song.isPlay){
-			this.$refs.audioNode.play();
-  		}
-  		else{
-  			this.$refs.audioNode.pause();
-  		}
-  		
+  		this.song.isPlay = !this.song.isPlay;//点击切换播放状态
+      this.$store.commit('updateSong', this.song);//点击的时候song的信息 到播放器
+
+  	// 	if(this.song.isPlay){
+			// this.$refs.audioNode.play();
+  	// 	}
+  	// 	else{
+  	// 		this.$refs.audioNode.pause();
+  	// 	} 		
   	},
 
   	getSongUrl(){//歌url接口
@@ -55,11 +57,25 @@ export default {
           if(song){
             if(this.url != song.url){//对同一首歌进入不做重新播放处理
               this.song.url = song.url;//得到url
-              this.songFun();
+              this.songFun();//进入个群详情就播放：得到接口后就手动触发一次，songFun
             }
           }
         }
       });
+    },
+
+    computed:{//监听是否播放
+      isPlay(){
+        return this.$store.getters.song.isPlay;
+      },
+    },
+    watch:{
+      isPlay(newval){//监听现在isplay状态
+        this.song.isPlay = newval;
+      },
+      activeIndex(newval){
+        this.transitionDuration();
+      },
     },
 
   },
@@ -134,9 +150,9 @@ export default {
   }
 }
 
-.song-audio{
-	position:absolute;
-	top:-100%;
-	left:-100%;
-}
+// .song-audio{
+// 	position:absolute;
+// 	top:-100%;
+// 	left:-100%;
+// }
 </style>
