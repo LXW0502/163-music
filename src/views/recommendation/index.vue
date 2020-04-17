@@ -4,7 +4,7 @@
     <app-title>推荐歌单</app-title>
     <ul class="imgText-list">
     	<li v-for="item in imgTextData" :key="item.id"> <!-- 得到网易的真实数据 - -->
-	      <router-link :to="''+item.id"><!-- 里面有图片和定位耳机 :to一定要写，不然没有图片效果 希望传的是字符串，所以加''-->
+	      <router-link :to="''+item.id"><!-- 里面有图片和定位耳机 :to一定要写，不然没有图片效果 希望传的是字符串，所以加''  ;'/song/'加路由，进去对应页面-->
 	       	<div class="img"><!-- 图片模块 -->
 	       	  <img :src="item.picUrl" alt=""><!-- 图片 -->
 	       	  <span><i class="fa fa-headphones"></i>{{(item.playCount/1000).toFixed(1)+"万"}}</span><!-- 耳机图标、播放数 -->
@@ -19,7 +19,7 @@
     <app-title>最新音乐</app-title>
     <ul class="newSong-list">
     	<li v-for="item in newSongData" :key="item.id">
-    		<router-link :to="''+item.id">
+    		<router-link :to="'/song/'+item.id">
     			<div class="text"><!-- 包括歌名和歌手 专辑 -->
     				<div class="name">{{item.name}}</div>
     				<div class="singer">{{item.song.artists[0].name != null? item.song.artists[0].name : '未知歌手' }} - {{item.song.album.name}}</div>  
@@ -81,7 +81,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 //推荐音乐样式 图文
 .imgText-list{
 	display:flex;//默认所有元素横向排列，不可能换行
