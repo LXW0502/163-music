@@ -1,25 +1,26 @@
 <template>
-  <div class="song " @click="songFun" :style="{ backgroundImage: 'url(http://music.163.com/api/img/blur/'+song.pic_str+')' }"><!-- 模糊背景的接口 -->
-    <div  class="song-wrap"><!-- 背景蒙层，用定位做 -->
+  <div class="song" @click="songFun" :style="{ backgroundImage: 'url(http://music.163.com/api/img/blur/'+song.pic_str+')' }"><!-- 模糊背景的接口 -->
+    <div class="song-wrap"><!-- 背景蒙层，用定位做 -->
       <div class="clearfix" :style="{ height: screen.height + 'px' }"><!-- 点开来是一屏,得到高度 -->
         <div class="song-player" ref="songPlayerNode">
-        	<i class="pointer" :style="{ transform: song.isPlay ? 'rotate(15deg)' : 'rotate(0deg)' }"></i><!-- 播放动画 -->
+          <i class="pointer" :style="{ transform: song.isPlay ? 'rotate(20deg)' : 'rotate(0deg)' }"></i><!-- 播放动画 -->
         	<i class="img-bg" :style="{ 'animation-play-state': song.isPlay ? 'running' : 'paused' }"></i><!-- 圆盘作为背景  animation-play-state暂停属性通过是否播放判断-->
         	<div class="img" :style="{ 'animation-play-state': song.isPlay ? 'running' : 'paused' }"><!-- 图片也一起转 同时要在样式加实际动画名-->
         		<img :src="song.picUrl" alt="">
         		<i class="status" v-show="!song.isPlay"></i>
-        	</div> 	
+          </div>
         </div>
+
   <!-- 歌词 -->
         <div class="lyric" :style="{ height: screen.lyricHeight + 'px' }">
           <div class="lyric-wrap">
-            <ul class="lyric-list" :style="{ 'transition-duration': transitionDurationTime, transform: 'translate(0, '+ -activeIndex*(80/75) +'rem)'}"><!-- 动画滚动 动态算时间-->
+            <ul class="lyric-list" :style="{ 'transition-duration': transitionDurationTime, transform: 'translate(0, '+ -activeIndex*(80/75) +'rem)'}"><!-- 动画滚动 动态算时间 行高80-->
               <li :class="{ active: index == activeIndex }" v-for="(item,index) in song.lyric" :key="index">{{ item.content }}</li>
             </ul>
-          </div>          
+          </div>
         </div>
-
       </div>
+
     </div>
   </div>
 </template>
@@ -39,12 +40,15 @@ export default {
         picUrl:'',//图片
         pic_str:'',//播放背景图片//在详情赋值
         lyric:[],//歌词{time：0s，content：‘歌词’ ，间隔：}
+        activeIndex:0,//当前歌词激活位置
       },
-      activeIndex:'',//当前
+     
       screen: {
         height: null,//屏幕的高度,以px作为单位返回的值
         lyricHeight: null,//歌词可以占据的高度,以px作为单位返回的值
       },
+
+      transitionDurationTime:0,//过渡的动画时间
     };
   },
   mounted(){//涉及节点操作，写在这里，希望得到song-player的节点高度
@@ -60,10 +64,11 @@ export default {
     windowResize();//默认时触发一次
   },
 
-  created(){//异步处理的
-	 this.getSongUrl();//触发接口
-   this.getSongDetail();
-   this.getSongLyric();
+  async created(){//异步变同步处理的、触发接口
+    await this.getSongDetail();
+    await this.getSongLyric();
+    //保证得到歌曲详情歌词，在得到url
+    this.getSongUrl();
   },
 
   methods:{
@@ -100,6 +105,7 @@ export default {
     },
 //歌详情接口
     getSongDetail(){
+      //返回Promise的实例对象
       return new Promise((resolve,reject) =>{
         var ids = this.$route.params.id;
         getSongDetail({ 
@@ -120,12 +126,13 @@ export default {
               this.song.pic_str = al.pic_str;
             }
           }
-          resolve(true);
+          resolve(true);//解决
         });
       });
     },
 //歌词接口
     getSongLyric(){
+      //Promise
       return new Promise((resolve,reject) =>{
         var id = this.$route.params.id;
         getSongLyric({ 
@@ -156,6 +163,18 @@ export default {
         });
       });
     },
+//得到歌词过渡时间
+    transitionDuration(){
+      var activeLyric = this.song.lyric[this.activeIndex];//当前歌词 this  activeIndex是计算里面来的，与song里面那个无关
+      var nextLyric = this.song.lyric[this.activeIndex + 1];//下一句歌词
+      if(nextLyric){
+        this.transitionDurationTime = (nextLyric.time - activeLyric.time) + 's';
+      }
+      else{
+        this.transitionDurationTime = 0;
+      }
+      console.log(this.transitionDurationTime)
+    },
 
   },
 
@@ -169,11 +188,17 @@ export default {
     url(){//歌的url，在song中得到url的数据
       return this.songStore.url;
     },
+    activeIndex(){
+      return this.songStore.activeIndex;
+    },
   },
 
   watch:{
     isPlay(newval){//监听现在isplay状态
       this.song.isPlay = newval;
+    },
+    activeIndex(newval){//监听新值，变化，就触发
+      this.transitionDuration();
     },
   },
   
@@ -195,17 +220,18 @@ export default {
 .song-wrap{
   background: rgba(0,0,0,0.5);//蒙层处理
   .lyric{
-    box-sizing:border-box;
+    box-sizing: border-box;
     padding: 46px 0;
-    display:flex;
+    display: flex;
   }
   .lyric-wrap{
+    width:100%;
     text-align: center;//居中
     color: rgba(255,255,255,0.4);//歌词设为白色灰一点
     font-size: 34px; /*px*/
     overflow: hidden;
     .lyric-list{
-      transition-property: transform;//过渡动画
+      transition-property: transform;//过渡属性
     }
     li{
       min-height: 80px;//歌词最小高度，空的也是如此

@@ -22,15 +22,16 @@ export default {
       //console.log(this.$refs.audioNode.currentTime, this.$refs.audioNode.duration)
       //this.lyric[this.actvieIndex].time//当前歌词开始的时间点
       //this.$refs.audioNode.currentTime//当前歌播放的时间点
-      var currentTime = this.$refs.audioNode.currentTime;
-      for(var index = 0; index < this.lyric.length; index++){
+      var currentTime = this.$refs.audioNode.currentTime;//一直在变
+      for(var index = 0; index < this.lyric.length; index++){//找最接近的
         var item = this.lyric[index];
         if(currentTime < item.time){
-          this.song.activeIndex = index == 0 ? 0 : index - 1;
+          this.song.activeIndex = index == 0 ? 0 : index - 1;//第一个从0开始；activeIndex是从计算里面来的
           break;
         }
       }
       //console.log(this.song.activeIndex)
+      //对song的activeIndex进行更新
       this.$store.commit('updateSong', this.song);
     };
   },
@@ -46,6 +47,12 @@ export default {
     },
     isShowPlayer(){//是否显示播放器
       return this.url != '' && this.url != null
+    },
+    actvieIndex(){
+      return this.song.actvieIndex;
+    },
+    lyric(){
+      return this.song.lyric;
     },
   },
   watch: {//监听是否播放isPlay通过song得到的

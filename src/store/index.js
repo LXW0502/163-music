@@ -12,6 +12,7 @@ const store = new Vuex.Store({//const只读
       picUrl:'',//图片
       pic_str:'',//播放背景图片//在详情赋值
       lyric:[],//歌词{time：0s，content：‘歌词’ ，间隔：}
+      activeIndex:0,//当前歌词激活位置
     },
   },
   getters:{//在组件中得到state
