@@ -17,6 +17,22 @@ export default {
       this.song.isPlay = true;
       this.$store.commit('updateSong', this.song);
     };
+
+    this.$refs.audioNode.ontimeupdate = ()=>{
+      //console.log(this.$refs.audioNode.currentTime, this.$refs.audioNode.duration)
+      //this.lyric[this.actvieIndex].time//当前歌词开始的时间点
+      //this.$refs.audioNode.currentTime//当前歌播放的时间点
+      var currentTime = this.$refs.audioNode.currentTime;
+      for(var index = 0; index < this.lyric.length; index++){
+        var item = this.lyric[index];
+        if(currentTime < item.time){
+          this.song.activeIndex = index == 0 ? 0 : index - 1;
+          break;
+        }
+      }
+      //console.log(this.song.activeIndex)
+      this.$store.commit('updateSong', this.song);
+    };
   },
   computed: {//计算属性
     song(){//得到歌song的数据

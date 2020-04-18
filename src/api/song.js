@@ -7,3 +7,16 @@ export function getSongUrl(oParams){
   });
 };
 
+//获取歌曲详情接口
+export function getSongDetail(oParams){
+  return require.get('/song/detail', {
+    params: oParams.params
+  });
+};
+
+//获取歌词接口
+export function getSongLyric(oParams){
+  return require.get('/lyric', {
+    params: oParams.params
+  });
+};

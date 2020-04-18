@@ -9,6 +9,9 @@ const store = new Vuex.Store({//const只读
       isPlay:false,//是否播放
       url:'',//当前歌曲地址
       name:'',//歌名
+      picUrl:'',//图片
+      pic_str:'',//播放背景图片//在详情赋值
+      lyric:[],//歌词{time：0s，content：‘歌词’ ，间隔：}
     },
   },
   getters:{//在组件中得到state
