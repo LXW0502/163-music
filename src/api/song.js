@@ -20,3 +20,17 @@ export function getSongLyric(oParams){
     params: oParams.params
   });
 };
+
+//获取相似音乐接口
+export function getSimiSong(oParams){
+  return require.get('/simi/song', {
+    params: oParams.params
+  });
+};
+
+//获取歌曲评论接口
+export function getComment(oParams){
+  return require.get('/comment/music', {
+    params: oParams.params
+  });
+};

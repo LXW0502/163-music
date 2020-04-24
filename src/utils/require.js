@@ -9,7 +9,7 @@ var require = axios.create({//axios的实例对象
 
 require.interceptors.request.use(function (config) {
   // Do something before request is sent
-  //console.log(config,123456)
+  //console.log(config,123456)？？？简化code==200那个
 
   return config;
 }, function (error) {
