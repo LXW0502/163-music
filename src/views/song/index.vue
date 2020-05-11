@@ -24,7 +24,7 @@
       <div class="simi">
         <div class="simi-title">喜欢这首个歌的人也听 <a class="fa fa-play-circle-o" @click="pushSongs" href="javascript:;">一键收听</a></div><!-- 点击对所有歌的id收集 -->
         <ul class="simi-list">
-          <li v-for="item in simiSong" :key="item.id" @click="$router.replace(`/song/${item.id}`)">
+          <li v-for="item in simiSong" :key="item.id" @click="$router.replace(`/song/${item.id}`)"><!-- 喜欢听这首歌的人也喜欢听下面的歌的路由跳转 -->
             <div class="simi-song">
               <img :src="item.picUrl" alt="">
               <dl>
@@ -51,7 +51,8 @@ export default {
   data () {
     return {
       song:{
-        id:this.$route.params.id,//通过路由获取
+        // id:Number(this.$route.params.id)更新时无法重载,//通过路由获取id是字符串类型
+        id:null,
       	isPlay:true,//是否播放 
         name:'',//歌名
       	url:null,//歌的url
@@ -84,7 +85,13 @@ export default {
     windowResize();//默认时触发一次
   },
 
-  async created(){//异步变同步处理的、触发接口
+  created(){
+    this.init();
+  },
+
+
+  methods:{
+    async init(){//异步变同步处理的、触发接口
     //此三个接口，同步执行，目的是为了得到一首歌的完整信息
     await this.getSongDetail();
     await this.getSongLyric();
@@ -94,12 +101,15 @@ export default {
        this.$store.commit('updateSong', this.song);
      });*/
      this.getSimiSong();
-  },
+     this.song.id = Number(this.$route.params.id);//id更新重载
 
-  methods:{
+
+    },
   	songFun(){
   		this.song.isPlay = !this.song.isPlay;//点击切换播放状态
       this.$store.commit('updateSong', this.song);//点击的时候song的信息 到播放器
+
+      this.$store.commit('updateSongList',this.song.id);
 
   	// 	if(this.song.isPlay){
 			// this.$refs.audioNode.play();
@@ -273,6 +283,9 @@ export default {
     },
     activeIndex(newval){//监听新值，变化，就触发
       this.transitionDuration();
+    },
+    ['$route'](newval,oldval){//监听路由
+      this.init();//更新路由,加载页面
     },
   },
   
